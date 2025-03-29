@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tournaments-finder</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <script>
+    var module = angular.module("Module", []);
+    var controller = module.controller("Controller", function ($scope, $http) {
+      $scope.FetchRecords = function () {
+        let url = "/fetch-all-records";
+        let city=document.querySelector("#city").value;
+        let game=document.querySelector("#games").value;
+        url += `?city=${encodeURIComponent(city)}&game=${encodeURIComponent(game)}`
+        $http.get(url).then(done, fail);
+        function done(response) {
+          alert(JSON.stringify(response.data));
+          $scope.jsonArray = response.data;
+        }
+        function fail(err) {
+          alert(err.data);
+        }
+
+      }
+      $scope.FetchCities = function () {
+        let url = "/fetch-cities";
+        $http.get(url).then(done, fail);
+        function done(response) {
+          alert(JSON.stringify(response.data));
+          $scope.jsonArrayCities = response.data;
+        }
+        function fail(err) {
+          alert(err.data);
+        }
+
+      }
+      $scope.FetchGames = function () {
+        let url = "/fetch-games";
+        $http.get(url).then(done, fail);
+        function done(response) {
+          alert(JSON.stringify(response.data));
+          $scope.jsonArrayGames = response.data;
+        }
+        function fail(err) {
+          alert(err.data);
+        }
+      }
+      $scope.FetchOne = function (index) {
+        $scope.selObj = $scope.jsonArray[index];
+      }
+    });
+  </script>
+</head>
+
+<body ng-app="Module" ng-controller="Controller" ng-init="FetchCities(); FetchGames(); ">
+  <br><br>
+  <div class="container">
+    <h1>Tournaments Finder</h1>
+    <div class="row">
+      <div class="col-md-5">
+        <!-- <button type="button" class="btn btn-outline-success" ng-click="FetchCities();">Fetch Cities</button><br><br> -->
+        <label for="city" class="form-label">City</label>
+        <select id="city" class="form-select">
+          <option value="none" selected disabled>Select</option>
+          <option ng-repeat="boxObj in jsonArrayCities" value="{{boxObj.city}}">{{boxObj.city}}</option>
+        </select>
+      </div>
+      <div class="col-md-5">
+        <!-- <button type="button" class="btn btn-outline-danger" ng-click="FetchGames();">Fetch Games</button><br><br> -->
+        <label for="games" class="form-label">Games</label>
+        <select id="games" class="form-select">
+          <option value="none" selected disabled>Select</option>
+          <option ng-repeat="boxObj in jsonArrayGames" value="{{boxObj.game}}">{{boxObj.game}}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <br><br>
+  <center>
+    <input type="button" value="Fetch All records" class="btn btn-primary" ng-click="FetchRecords();">
+  </center>
+  <br><br>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3" ng-repeat="boxObj  in jsonArray">
+        <div class="card">
+          <center> <img src="{{boxObj.poster}}" width="100" height="100" alt="..."></center>
+          <div class="card-body">
+            <h5>{{boxObj.title}}</h5>
+            <h5 class="card-title">Game: {{boxObj.game}}</h5>
+            <h5 class="card-title">Date: {{boxObj.dot | date: 'yyyy-MM-dd'}}</h5>
+            <h5 class="card-title">Entry fees: {{boxObj.fee}}</h5>
+            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+              ng-click="FetchOne($index)">Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">More Details</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            <center> <img src="{{selObj.poster}}" width="100" height="100" alt="..."></center>
+          </p>
+          <p>
+            {{selObj.tid}}
+          </p>
+          <p>
+            {{selObj.title}}
+          </p>
+          <p>
+            {{selObj.game}}
+          </p>
+          <p>
+            {{selObj.tournaments}}
+          </p>
+          <p>
+            {{selObj.emailid}}
+          </p>
+          <p>
+            {{selObj.prizes}}
+          </p>
+          <p>
+            {{selObj.fee}}
+          </p>
+          <p>
+            {{selObj.city}}
+          </p>
+          <p>
+            {{selObj.location}}
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
