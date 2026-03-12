@@ -46,8 +46,12 @@ app.get("/tournaments-finder",function(req,resp){
 app.get("/Publish-Tournaments",function(req,resp){
     var path=__dirname+"/public/publish-tournaments.html";
     resp.sendFile(path);
-}) 
-let configuration="mysql://avnadmin:AVNS_H7yvqKdsOeVzBxWeTPn@mysql-2eb3597b-goyaldevansh828-19a6.k.aivencloud.com:28158/Sports"
+})
+
+require('dotenv').config(); // This loads the .env file into process.env
+
+const password = process.env.AIVEN_PASSWORD;
+let configuration="mysql://avnadmin:"+password+"@mysql-1fb819c0-goyaldevansh828-19a6.j.aivencloud.com:28158/defaultdb?ssl-mode=REQUIRED"
 let mysqlServer=mysql2.createConnection(configuration);
 mysqlServer.connect(function(err)
 {
